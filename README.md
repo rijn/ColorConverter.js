@@ -1,4 +1,4 @@
-# Color-Converter
+# ColorConverter.js
 
 A JavaScript library that makes converting between color spaces.
 
