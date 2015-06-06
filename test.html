@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ColorConverter.js</title>
+</head>
+
+<body>
+    <script src="./ColorConverter.js"></script>
+    <script>
+    var cc = new ColorConverter();
+    var colors = [
+        "RGB('ff8585')",
+        "RGB('#ABC')",
+        "RGB(12,23,45)",
+        "CMYK(0,48,48,0)",
+        "Lab(88.2321841967678,6.0219303476973245,-0.17248210535405484)",
+    ];
+    console.log("import", colors);
+    console.log(cc.import(colors));
+    console.log("push #123456", cc.push("RGB('#123456')"));
+    console.log(cc.export("RGB", 'hex'));
+    console.log(cc.export("RGB", 'function'));
+    console.log(cc.export("CMYK", 'function'));
+    console.log(cc.export("Lab", 'function'));
+    console.log(cc.export("RGB", 'object'));
+    </script>
+</body>
+
+</html>
