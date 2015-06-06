@@ -1,6 +1,6 @@
 # Color-Converter
 
-Convert color between multiply color space.
+A JavaScript library that makes converting between color spaces.
 
 ## Getting Started
 
