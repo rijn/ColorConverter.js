@@ -16,9 +16,10 @@ import the js library.
 
 ### Import colors
 
-You can push a array of colors through `import` method.
+You can push colors through `import` method.
 
 ```
+/* import a array of colors */
 colors = [
     "RGB('ffffff');",
     "RGB('#FFFFFF');",
@@ -28,6 +29,9 @@ colors = [
 ];
 
 CC.import(colors);
+
+/* import one color */
+CC.import("RGB('#fff')");
 ```
 
 CC will return a array of import result like:
