@@ -34,12 +34,6 @@ CC will return a array of import result like:
 
 `[true, true, false, true, ...]`
 
-or import one color with `push` method.
-
-```
-CC.push("RGB('#fff')");   // true
-```
-
 ### Export colors
 
 Export colors with a converted data.
@@ -47,6 +41,14 @@ Export colors with a converted data.
 ```
 CC.export("Lab");   // {L:0,a:0,b:0}
 CC.export("RGB");   // {R:0,G:0,B:0}
+```
+
+### Reset colors
+
+delect the colors.
+
+```
+CC.reset();        // ture
 ```
 
 ## Currently Supported Color Spaces

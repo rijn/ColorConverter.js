@@ -12,7 +12,7 @@
         var len = this.length;
         var context = arguments[1];
         if (typeof fun !== "function") {
-            throw Error("unknwon function");
+            throw Error("unknown function");
         }
         for (var i = 0; i < len; i++) {
             fun.call(context, this[i], i, this);
@@ -663,7 +663,7 @@
             var argu = flatten(arguments),
                 output = [],
                 self = this;
-            self.colors = [];
+
             argu.forEach(function(code) {
                 var res = eval("(ImportProcessor." + code + ")");
                 self.colors.push(res);
@@ -671,15 +671,6 @@
             });
 
             return output;
-        },
-
-        push: function() {
-            var argu = flatten([arguments]),
-                output = [],
-                self = this,
-                res = eval("(ImportProcessor." + argu[0] + ")");
-            self.colors.push(res);
-            return !!res;
         },
 
         export: function() {
@@ -777,6 +768,12 @@
 
             })
             return output;
+        },
+
+        reset: function() {
+            var self = this;
+            self.colors = [];
+            return true;
         },
 
     }
