@@ -58,3 +58,5 @@ RGB  => Function, Object, Hex
 * Lab
 * RGB
 * CMYK
+* HSV(HSB)
+* HSL

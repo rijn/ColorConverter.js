@@ -12,20 +12,23 @@
     <script>
     var cc = new ColorConverter();
     var colors = [
-        "RGB('ff8585')",
+        "RGB('e8d9dd')",
         "RGB('#ABC')",
         "RGB(12,23,45)",
-        "CMYK(0,48,48,0)",
+        "CMYK(0,0.48,0.48,0)",
         "Lab(88.2321841967678,6.0219303476973245,-0.17248210535405484)",
     ];
     console.log("import", colors);
     console.log(cc.import(colors));
     console.log("push #123456", cc.push("RGB('#123456')"));
+    console.log("push HSL(180,0.5,0.1)", cc.push("HSL(180,0.5,0.1)"));
+    console.log("push HSV(180,0.5,0.1)", cc.push("HSV(180,0.5,0.1)"));
     console.log(cc.export("RGB", 'hex'));
     console.log(cc.export("RGB", 'function'));
     console.log(cc.export("CMYK", 'function'));
     console.log(cc.export("Lab", 'function'));
     console.log(cc.export("RGB", 'object'));
+    console.log(cc.export("HSL", 'function'));
     </script>
 </body>
 

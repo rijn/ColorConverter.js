@@ -43,17 +43,88 @@
             }
             return output;
         },
-        min = function(_input) {
-            var tempVal = _input[0];
+        min = function() {
+            var _input = flatten([arguments]),
+                tempVal = _input[0];
             for (var i = 0; i < _input.length; i++) {
                 if (tempVal > _input[i]) {
                     tempVal = _input[i];
                 }
             }
             return tempVal;
-        };
+        },
+        acc = {
+            div: function(arg1, arg2) {
+                var t1 = 0,
+                    t2 = 0,
+                    r1, r2;
+                try {
+                    t1 = arg1.toString().split(".")[1].length
+                } catch (e) {}
+                try {
+                    t2 = arg2.toString().split(".")[1].length
+                } catch (e) {}
 
-    var RGB2XYZ = function(_rgb) {
+                r1 = Number(arg1.toString().replace(".", ""))
+                r2 = Number(arg2.toString().replace(".", ""))
+                return acc.mul((r1 / r2), Math.pow(10, t2 - t1));
+
+            },
+            mul: function(arg1, arg2) {
+                var m = 0,
+                    s1 = arg1.toString(),
+                    s2 = arg2.toString();
+                try {
+                    m += s1.split(".")[1].length
+                } catch (e) {}
+                try {
+                    m += s2.split(".")[1].length
+                } catch (e) {}
+                return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
+            },
+            add: function(arg1, arg2) {
+                var r1, r2, m;
+                try {
+                    r1 = arg1.toString().split(".")[1].length
+                } catch (e) {
+                    r1 = 0
+                }
+                try {
+                    r2 = arg2.toString().split(".")[1].length
+                } catch (e) {
+                    r2 = 0
+                }
+                m = Math.pow(10, Math.max(r1, r2))
+                return Number((arg1 * m + arg2 * m) / m);
+            },
+            sub: function(arg1, arg2) {
+                var r1, r2, m, n;
+                try {
+                    r1 = arg1.toString().split(".")[1].length
+                } catch (e) {
+                    r1 = 0
+                }
+                try {
+                    r2 = arg2.toString().split(".")[1].length
+                } catch (e) {
+                    r2 = 0
+                }
+                m = Math.pow(10, Math.max(r1, r2));
+                n = (r1 >= r2) ? r1 : r2;
+                return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
+            }
+        },
+        max = function() {
+            var _input = flatten([arguments]),
+                tempVal = _input[0];
+            for (var i = 0; i < _input.length; i++) {
+                if (tempVal < _input[i]) {
+                    tempVal = _input[i];
+                }
+            }
+            return tempVal;
+        },
+        RGB2XYZ = function(_rgb) {
             return {
                 X: (_rgb.B * 199049 + _rgb.G * 394494 + _rgb.R * 455033 + 524288) >> 20,
                 Y: (_rgb.B * 75675 + _rgb.G * 749900 + _rgb.R * 223002 + 524288) >> 20,
@@ -178,24 +249,208 @@
             }
 
             return {
-                C: c * 100,
-                M: m * 100,
-                Y: y * 100,
-                K: k * 100,
+                C: c,
+                M: m,
+                Y: y,
+                K: k,
             };
         },
         CMYK2RGB = function(_cmyk) {
             var r, g, b;
 
-            r = ((100 - _cmyk.K) * (100 - _cmyk.C)) / 10000 * 255;
-            g = ((100 - _cmyk.K) * (100 - _cmyk.M)) / 10000 * 255;
-            b = ((100 - _cmyk.K) * (100 - _cmyk.Y)) / 10000 * 255;
+            r = ((1 - _cmyk.K) * (1 - _cmyk.C)) * 255;
+            g = ((1 - _cmyk.K) * (1 - _cmyk.M)) * 255;
+            b = ((1 - _cmyk.K) * (1 - _cmyk.Y)) * 255;
 
             return {
                 R: r,
                 G: g,
                 B: b,
             };
+        },
+        RGB2HSV = function(_rgb) {
+            var r = _rgb.R / 255,
+                g = _rgb.G / 255,
+                b = _rgb.B / 255,
+                minRGB = min(r, g, b),
+                maxRGB = max(r, g, b),
+                H, S, V;
+
+            if (minRGB == maxRGB) {
+                V = minRGB;
+                return {
+                    H: 0,
+                    S: 0,
+                    V: V,
+                }
+            } else {
+                var d = (r == minRGB) ? g - b : ((b == minRGB) ? r - g : b - r),
+                    h = (r == minRGB) ? 3 : ((b == minRGB) ? 1 : 5);
+                H = 60 * (h - d / (maxRGB - minRGB));
+                S = (maxRGB - minRGB) / maxRGB;
+                V = maxRGB;
+                return {
+                    H: H,
+                    S: S,
+                    V: V,
+                }
+            }
+        },
+        HSV2RGB = function(_hsv) {
+            var H = _hsv.H,
+                S = _hsv.S,
+                V = _hsv.V,
+                _r, _g, _b,
+
+                c = V * S,
+                h = H / 60,
+                x = c * (1 - Math.abs(h % 2 - 1)),
+                i = parseInt(h),
+                m = V - c;
+
+            switch (i) {
+                case 0:
+                    _r = c;
+                    _g = x;
+                    _b = 0;
+                    break;
+                case 1:
+                    _r = x;
+                    _g = c;
+                    _b = 0;
+                    break;
+                case 2:
+                    _r = 0;
+                    _g = c;
+                    _b = x;
+                    break;
+                case 3:
+                    _r = 0;
+                    _g = x;
+                    _b = c;
+                    break;
+                case 4:
+                    _r = x;
+                    _g = 0;
+                    _b = c;
+                    break;
+                case 5:
+                    _r = c;
+                    _g = 0;
+                    _b = x;
+                    break;
+            };
+
+            _r += m;
+            _g += m;
+            _b += m;
+
+            return {
+                R: _r * 255,
+                G: _g * 255,
+                B: _b * 255,
+            };
+        },
+        RGB2HSL = function(_rgb) {
+            var R = _rgb.R / 255,
+                G = _rgb.G / 255,
+                B = _rgb.B / 255,
+                Min = min(R, G, B),
+                Max = max(R, G, B),
+                del_Max = Max - Min,
+                L = (Max + Min) / 2.0,
+                del_R, del_G, del_B,
+                H, S;
+
+            if (del_Max == 0) {
+                H = 0;
+                S = 0;
+            } else {
+                if (L < 0.5)
+                    S = del_Max / (Max + Min);
+                else
+                    S = del_Max / (2 - Max - Min);
+
+                del_R = (((Max - R) / 6.0) + (del_Max / 2.0)) / del_Max;
+                del_G = (((Max - G) / 6.0) + (del_Max / 2.0)) / del_Max;
+                del_B = (((Max - B) / 6.0) + (del_Max / 2.0)) / del_Max;
+
+                if (R == Max) H = del_B - del_G;
+                else if (G == Max) H = (1.0 / 3.0) + del_R - del_B;
+                else if (B == Max) H = (2.0 / 3.0) + del_G - del_R;
+
+                if (H < 0) H += 1;
+                if (H > 1) H -= 1;
+            };
+
+            return {
+                H: H * 360,
+                S: S,
+                L: L,
+            };
+        },
+        HSL2RGB = function(_hsl) {
+            var H = _hsl.H,
+                S = _hsl.S,
+                L = _hsl.L,
+                _r, _g, _b,
+
+                c = acc.mul(acc.sub(1, Math.abs(acc.sub(acc.mul(2, L), 1))), S),
+                h = H / 60,
+                x = acc.mul(c, (1 - Math.abs(h % 2 - 1))),
+                i = parseInt(h),
+                m = acc.sub(L, acc.div(c, 2));
+
+            switch (i) {
+                case 0:
+                    _r = c;
+                    _g = x;
+                    _b = 0;
+                    break;
+                case 1:
+                    _r = x;
+                    _g = c;
+                    _b = 0;
+                    break;
+                case 2:
+                    _r = 0;
+                    _g = c;
+                    _b = x;
+                    break;
+                case 3:
+                    _r = 0;
+                    _g = x;
+                    _b = c;
+                    break;
+                case 4:
+                    _r = x;
+                    _g = 0;
+                    _b = c;
+                    break;
+                case 5:
+                    _r = c;
+                    _g = 0;
+                    _b = x;
+                    break;
+            };
+
+            _r = acc.add(_r, m);
+            _g = acc.add(_g, m);
+            _b = acc.add(_b, m);
+
+            return {
+                R: _r * 255,
+                G: _g * 255,
+                B: _b * 255,
+            };
+        },
+        HUE2RGB = function(v1, v2, vH) {
+            if (vH < 0) vH += 1;
+            if (vH > 1) vH -= 1;
+            if (6.0 * vH < 1) return v1 + (v2 - v1) * 6.0 * vH;
+            if (2.0 * vH < 1) return v2;
+            if (3.0 * vH < 2) return v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0;
+            return (v1);
         },
         Color2LAB = {
             Lab: function() {
@@ -210,7 +465,9 @@
                     b: input[2],
                 };
 
-                return _lab;
+                return {
+                    Lab: _lab,
+                };
             },
             RGB: function() {
                 var input = flatten(arguments),
@@ -252,7 +509,10 @@
                     B: rgbColor[2],
                 };
 
-                return XYZ2LAB(RGB2XYZ(_rgb));
+                return {
+                    Lab: XYZ2LAB(RGB2XYZ(_rgb)),
+                    RGB: _rgb,
+                };
             },
             CMYK: function() {
                 var input = flatten(arguments);
@@ -267,11 +527,49 @@
                     K: input[3],
                 };
 
-                return XYZ2LAB(RGB2XYZ(CMYK2RGB(_cmyk)));
+                return {
+                    Lab: XYZ2LAB(RGB2XYZ(CMYK2RGB(_cmyk))),
+                    CMYK: _cmyk,
+                }
+            },
+            HSL: function() {
+                var input = flatten(arguments);
+                if (input.length < 3) {
+                    return false;
+                }
+
+                var _hsl = {
+                    H: input[0],
+                    S: input[1],
+                    L: input[2],
+                };
+
+                return {
+                    Lab: XYZ2LAB(RGB2XYZ(HSL2RGB(_hsl))),
+                    HSL: _hsl,
+                };
+            },
+            HSV: function() {
+                var input = flatten(arguments);
+                if (input.length < 3) {
+                    return false;
+                }
+
+                var _hsv = {
+                    H: input[0],
+                    S: input[1],
+                    V: input[2],
+                };
+
+                return {
+                    Lab: XYZ2LAB(RGB2XYZ(HSV2RGB(_hsv))),
+                    HSV: _hsv,
+                }
             },
         },
         LAB2Color = {
-            Lab: function(_lab, mode) {
+            Lab: function(_color, mode) {
+                var _lab = _color.Lab;
                 mode = String(mode || 0).toLowerCase();
                 switch (mode) {
                     case ('0'):
@@ -284,7 +582,8 @@
                         break;
                 }
             },
-            RGB: function(_lab, mode) {
+            RGB: function(_color, mode) {
+                var _lab = _color.Lab;
                 mode = String(mode || 0).toLowerCase();
 
                 var _rgb = XYZ2RGB(LAB2XYZ(_lab)),
@@ -326,21 +625,64 @@
                         break;
                 }
             },
-            CMYK: function(_lab, mode) {
+            CMYK: function(_color, mode) {
+                var _lab = _color.Lab;
                 mode = String(mode || 0).toLowerCase();
 
                 var _cmyk = RGB2CMYK(XYZ2RGB(LAB2XYZ(_lab)));
 
                 for (var i in _cmyk) {
-                    _cmyk[i] = Math.round(Number(_cmyk[i]));
+                    _cmyk[i] = Number(_cmyk[i]);
                     if (_cmyk[i] < 0) _cmyk[i] = 0;
-                    if (_cmyk[i] > 100) _cmyk[i] = 100;
+                    if (_cmyk[i] > 1) _cmyk[i] = 1;
                 };
 
                 switch (mode) {
                     case ('0'):
                     case ('function'):
                         return "CMYK(" + _cmyk.C + "," + _cmyk.M + "," + _cmyk.Y + "," + _cmyk.K + ")";
+                        break;
+                    case ('1'):
+                    case ('object'):
+                        return _cmyk;
+                        break;
+                }
+            },
+            HSL: function(_color, mode) {
+                var _lab = _color.Lab;
+                mode = String(mode || 0).toLowerCase();
+
+                var _hsl = RGB2HSL(XYZ2RGB(LAB2XYZ(_lab)));
+
+                for (var i in _hsl) {
+                    _hsl[i] = Number(_hsl[i]);
+                };
+
+                switch (mode) {
+                    case ('0'):
+                    case ('function'):
+                        return "HSL(" + _hsl.H + "," + _hsl.S + "," + _hsl.L + ")";
+                        break;
+                    case ('1'):
+                    case ('object'):
+                        return _cmyk;
+                        break;
+                }
+            },
+            HSV: function(_color, mode) {
+                var _lab = _color.Lab;
+                mode = String(mode || 0).toLowerCase();
+
+                var _hsv = RGB2HSL(XYZ2RGB(LAB2XYZ(_lab)));
+
+                for (var i in _hsv) {
+                    _hsv[i] = Number(_hsv[i]);
+                };
+
+                switch (mode) {
+                    case ('0'):
+                    case ('function'):
+                        return "HSV(" + _hsv.H + "," + _hsv.S + "," + _hsv.V + ")";
                         break;
                     case ('1'):
                     case ('object'):
@@ -369,6 +711,7 @@
                 self.colors.push(res);
                 output.push(!!res);
             });
+
             return output;
         },
 
