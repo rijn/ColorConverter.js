@@ -48,7 +48,7 @@ CC.export("RGB");   // {R:0,G:0,B:0}
 delete the colors.
 
 ```
-CC.reset();        // ture
+CC.reset();        // true
 ```
 
 ## Currently Supported Color Spaces
