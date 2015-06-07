@@ -23,12 +23,17 @@
     console.log("push #123456", cc.push("RGB('#123456')"));
     console.log("push HSL(180,0.5,0.1)", cc.push("HSL(180,0.5,0.1)"));
     console.log("push HSV(180,0.5,0.1)", cc.push("HSV(180,0.5,0.1)"));
-    console.log(cc.export("RGB", 'hex'));
-    console.log(cc.export("RGB", 'function'));
-    console.log(cc.export("CMYK", 'function'));
-    console.log(cc.export("Lab", 'function'));
-    console.log(cc.export("RGB", 'object'));
-    console.log(cc.export("HSL", 'function'));
+    console.log(cc.export("RGB"));
+    //console.log(cc.export("RGB", 'function'));
+    //console.log(cc.export("CMYK", 'function'));
+    //console.log(cc.export("Lab", 'function'));
+    //console.log(cc.export("RGB", 'object'));
+    //console.log(cc.export("HSL", 'function'));
+
+    console.log("push #123456", cc.push("RGB('#123456')"));
+    console.log("export RGB", JSON.stringify(cc.export("RGB")));
+    console.log("export CMYK", JSON.stringify(cc.export("CMYK")));
+    console.log("export Lab", JSON.stringify(cc.export("Lab")));
     </script>
 </body>
 
