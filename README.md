@@ -34,23 +34,19 @@ CC will return a array of import result like:
 
 `[true, true, false, true, ...]`
 
+or import one color with `push` method.
+
+```
+CC.push("RGB('#fff')");   // true
+```
+
 ### Export colors
 
 Export colors with a converted data.
 
 ```
-CC.export("Lab", "Function");   // "Lab(0,0,0)"
-CC.export("Lab", "Object");     // {L:0,a:0,b:0}
-CC.export("CMYK", "Function");  // "CMYK(0,0,0,0)"
-CC.export("RGB", "Hex");        // "000000"
-```
-
-Support formats shown as follows
-
-```
-Lab  => Function, Object
-CMYK => Function, Object
-RGB  => Function, Object, Hex
+CC.export("Lab");   // {L:0,a:0,b:0}
+CC.export("RGB");   // {R:0,G:0,B:0}
 ```
 
 ## Currently Supported Color Spaces
