@@ -45,7 +45,7 @@ CC.export("RGB");   // {R:0,G:0,B:0}
 
 ### Reset colors
 
-delect the colors.
+delete the colors.
 
 ```
 CC.reset();        // ture
