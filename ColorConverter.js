@@ -8,6 +8,17 @@
 (function(window, document, undefined) {
     "use strict";
 
+    Array.prototype.forEach = function(fun, context) {
+        var len = this.length;
+        var context = arguments[1];
+        if (typeof fun !== "function") {
+            throw Error("unknwon function");
+        }
+        for (var i = 0; i < len; i++) {
+            fun.call(context, this[i], i, this);
+        }
+    };
+
     Array.prototype.getLast = function() {
         return this instanceof Array ? this[this.length - 1] : false;
     }
@@ -529,7 +540,7 @@
             return (v1);
         },
 
-        Color2LAB = {
+        ImportProcessor = {
             Lab: function() {
                 var input = flatten(arguments);
                 if (input.length < 3) {
@@ -640,7 +651,7 @@
 
         var self = this;
         self.colors = [];
-        
+
     };
 
     ColorConverter.prototype = {
@@ -654,7 +665,7 @@
                 self = this;
             self.colors = [];
             argu.forEach(function(code) {
-                var res = eval("(Color2LAB." + code + ")");
+                var res = eval("(ImportProcessor." + code + ")");
                 self.colors.push(res);
                 output.push(!!res);
             });
@@ -666,7 +677,7 @@
             var argu = flatten([arguments]),
                 output = [],
                 self = this,
-                res = eval("(Color2LAB." + argu[0] + ")");
+                res = eval("(ImportProcessor." + argu[0] + ")");
             self.colors.push(res);
             return !!res;
         },
