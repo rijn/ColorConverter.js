@@ -20,13 +20,13 @@ You can push colors through `import` method.
 
 ```
 /* import a array of colors */
-cc.import(
+cc.import([
     ["HSL", 180, 0.5, 0.1],
     ["RGB", 180, 50, 50],
     ["RGB", "ffffff"],
     ["CMYK", 0, 0, 0],
     ...
-);
+]);
 ```
 
 CC will return a array of import result like:

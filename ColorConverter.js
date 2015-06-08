@@ -652,11 +652,28 @@
             },
         };
 
+    var defaults = {
+        colors: [],
+    };
 
     /* Main function */
-    function ColorConverter() {
+    function ColorConverter(options) {
         var self = this;
         self.colors = [];
+
+        if (!(self instanceof ColorConverter)) return new ColorConverter(options);
+
+        self.options = options || {};
+
+        for (var i in defaults) {
+            if (self.options[i] == null) {
+                self.options[i] = defaults[i];
+            }
+        }
+
+        if (!!self.options.colors) {
+            self.import(self.options.colors);
+        }
     };
 
     /* Extend functions */
@@ -665,7 +682,7 @@
         constructor: ColorConverter,
 
         import: function() {
-            var argu = Array.prototype.slice.call(arguments),
+            var argu = Array.prototype.slice.call(arguments)[0],
                 output = [],
                 self = this;
             console.log(argu);
@@ -678,11 +695,13 @@
 
                 if (!spaces.hasOwnProperty(_format)) {
                     throw Error("Unsupport color spaces");
-                }
+                };
 
                 var _obj = eval("(spaces." + _format + ".import)");
 
-                if (_obj === undefined) throw Error("Cannot convert from " + _format);
+                if (_obj === undefined) {
+                    throw Error("Cannot convert from " + _format);
+                };
 
                 var _res = _obj.call(this, _para);
 
@@ -691,7 +710,7 @@
                     output.push(self.colors.length - 1);
                 } else {
                     output.push(false);
-                }
+                };
             });
 
             return output;
