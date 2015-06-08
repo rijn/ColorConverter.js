@@ -2,6 +2,10 @@
 
 A JavaScript library that makes converting between color spaces.
 
+## Demo
+
+[ColorConverter.js](http://lab.pixelnfinite.com/ColorConverter.js/)
+
 ## Getting Started
 
 import the js library.

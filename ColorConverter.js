@@ -661,19 +661,21 @@
         var self = this;
         self.colors = [];
 
-        if (!(self instanceof ColorConverter)) return new ColorConverter(options);
+        if (!(self instanceof ColorConverter)) {
+            return new ColorConverter(options);
+        };
 
         self.options = options || {};
 
         for (var i in defaults) {
             if (self.options[i] == null) {
                 self.options[i] = defaults[i];
-            }
-        }
+            };
+        };
 
         if (!!self.options.colors) {
             self.import(self.options.colors);
-        }
+        };
     };
 
     /* Extend functions */
@@ -685,10 +687,10 @@
             var argu = Array.prototype.slice.call(arguments)[0],
                 output = [],
                 self = this;
-            console.log(argu);
 
-            argu.forEach(function(code) {
-                var _temp = flatten(code);
+            for (var i = 0; i < argu.length; i++) {
+
+                var _temp = flatten(argu[i]);
                 /*split temp*/
                 var _format = _temp.shift(),
                     _para = _temp;
@@ -711,7 +713,7 @@
                 } else {
                     output.push(false);
                 };
-            });
+            };
 
             return output;
         },
@@ -727,15 +729,17 @@
                 for (var i in self.colors) {
                     if (self.colors.hasOwnProperty(i)) {
                         list.push(i);
-                    }
-                }
+                    };
+                };
             };
 
             list.forEach(function(_i) {
 
                 var _code = self.colors[_i];
 
-                if (_code === undefined) throw Error("Undefined color");
+                if (_code === undefined) {
+                    throw Error("Undefined color");
+                };
 
                 var _key = (function(_code) {
                         for (var i in _code) {
@@ -757,8 +761,10 @@
                         var flag = false;
                         for (var key in tokens) {
                             if (tokens.hasOwnProperty(key)) {
-                                if (!tokens[key]._terminal) return false;
-                            }
+                                if (!tokens[key]._terminal) {
+                                    return false;
+                                };
+                            };
                         };
                         return true;
                     })(_tokens, _target) && _depth < 10) {
@@ -785,16 +791,16 @@
                                         } else {
                                             _temp._path.push(key);
                                             _temp._cost += eval("(spaces." + _nowkey + "." + key + ".cost)");
-                                        }
+                                        };
 
                                         _deplicate.push(_temp);
-                                    }
-                                }
+                                    };
+                                };
 
                                 _obj = null;
 
-                            }
-                        }
+                            };
+                        };
                     };
 
                     _tokens = _deplicate;
@@ -820,7 +826,7 @@
 
                 for (var i = 1; i < _rp.length; i++) {
                     _temp = eval("(spaces." + _rp[i - 1] + "." + _rp[i] + ".convert(" + JSON.stringify(_temp) + "))");
-                }
+                };
 
                 output.push(_temp);
 
