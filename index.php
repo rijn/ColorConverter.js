@@ -67,13 +67,13 @@
                 name: "XYZ",
                 para: [{
                     key: "X",
-                    value: 0,res:"0~255",
+                    value: 0,res:"0~2",
                 }, {
                     key: "Y",
-                    value: 0,res:"0~255",
+                    value: 0,res:"0~2",
                 }, {
                     key: "Z",
-                    value: 0,res:"0~255",
+                    value: 0,res:"0~2",
                 }, ]
             }, {
                 name: "Lab",
@@ -86,6 +86,30 @@
                 }, {
                     key: "b",
                     value: 0,res:"-128~127",
+                }, ]
+            }, {
+                name: "LCH",
+                para: [{
+                    key: "L",
+                    value: 0,res:"0~100",
+                }, {
+                    key: "C",
+                    value: 0,res:"-128~127",
+                }, {
+                    key: "H",
+                    value: 0,res:"-128~127",
+                }, ]
+            }, {
+                name: "LUV",
+                para: [{
+                    key: "L",
+                    value: 0,res:"0~100",
+                }, {
+                    key: "U",
+                    value: 0,res:"-134~224",
+                }, {
+                    key: "V",
+                    value: 0,res:"-140~122",
                 }, ]
             }, {
                 name: "CMY",
@@ -209,7 +233,7 @@
                                 <label class="sr-only">{{para.key}}</label>
                                 <div class="input-group">
                                     <div class="input-group-addon">{{para.key}}</div>
-                                    <input type="text" class="form-control" ng-model="para.value" ng-change="dataChange()">
+                                    <input type="number" class="form-control" ng-model="para.value" ng-change="dataChange()">
                                     <div class="input-group-addon">{{para.res}}</div>
                                 </div>
                             </div>

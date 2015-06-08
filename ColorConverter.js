@@ -170,6 +170,18 @@
         },
         /* Color spaces defination */
         spaces = {
+            constant: {
+                Epsilon: 216 / 24389,
+                Kappa: 24389 / 27,
+                XYZ_WhiteRefrence: {
+                    X: 95.047,
+                    Y: 100.000,
+                    Z: 108.883,
+                },
+                CubicRoot: function(n) {
+                    return Math.pow(n, 1.0 / 3.0);
+                },
+            },
             RGB: {
                 import: function() {
                     var input = flatten(arguments),
@@ -214,10 +226,17 @@
                 },
                 XYZ: {
                     convert: function(_rgb) {
+                        function PivotRgb(n) {
+                            return (n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92) * 100.0;
+                        }
+                        _rgb.R = PivotRgb(_rgb.R / 255);
+                        _rgb.G = PivotRgb(_rgb.G / 255);
+                        _rgb.B = PivotRgb(_rgb.B / 255);
+
                         return {
-                            X: (_rgb.B * 199049 + _rgb.G * 394494 + _rgb.R * 455033 + 524288) >> 20,
-                            Y: (_rgb.B * 75675 + _rgb.G * 749900 + _rgb.R * 223002 + 524288) >> 20,
-                            Z: (_rgb.B * 915161 + _rgb.G * 114795 + _rgb.R * 18621 + 524288) >> 20,
+                            X: _rgb.R * 0.412453 + _rgb.G * 0.357580 + _rgb.B * 0.180423,
+                            Y: _rgb.R * 0.212671 + _rgb.G * 0.715160 + _rgb.B * 0.072169,
+                            Z: _rgb.R * 0.019334 + _rgb.G * 0.119193 + _rgb.B * 0.950227,
                         };
                     },
                     cost: 1,
@@ -612,65 +631,75 @@
                 },
                 RGB: {
                     convert: function(_xyz) {
-                        var Blue = (_xyz.X * 55460 - _xyz.Y * 213955 + _xyz.Z * 1207070) >> 20,
-                            Green = (_xyz.X * -965985 + _xyz.Y * 1967119 + _xyz.Z * 47442) >> 20,
-                            Red = (_xyz.X * 3229543 - _xyz.Y * 1611819 - _xyz.Z * 569148) >> 20;
-                        if (Red > 255) Red = 255;
-                        else if (Red < 0) Red = 0;
-                        if (Green > 255) Green = 255;
-                        else if (Green < 0) Green = 0;
-                        if (Blue > 255) Blue = 255;
-                        else if (Blue < 0) Blue = 0;
+
+                        function ToRgb(n) {
+                            var result = 255 * n;
+                            if (result < 0) return 0;
+                            if (result > 255) return 255;
+                            return result;
+                        }
+
+                        var x = _xyz.X / 100.0,
+                            y = _xyz.Y / 100.0,
+                            z = _xyz.Z / 100.0,
+
+                            r = x * 3.2406 + y * -1.5372 + z * -0.4986,
+                            g = x * -0.9689 + y * 1.8758 + z * 0.0415,
+                            b = x * 0.0557 + y * -0.2040 + z * 1.0570;
+
+                        r = r > 0.0031308 ? 1.055 * Math.pow(r, 1 / 2.4) - 0.055 : 12.92 * r;
+                        g = g > 0.0031308 ? 1.055 * Math.pow(g, 1 / 2.4) - 0.055 : 12.92 * g;
+                        b = b > 0.0031308 ? 1.055 * Math.pow(b, 1 / 2.4) - 0.055 : 12.92 * b;
+
                         return {
-                            R: Red,
-                            G: Green,
-                            B: Blue,
+                            R: ToRgb(r),
+                            G: ToRgb(g),
+                            B: ToRgb(b),
                         };
                     },
                     cost: 1,
                 },
                 Lab: {
                     convert: function(_xyz) {
-                        var BLACK = 20,
-                            YELLOW = 70,
-                            X = _xyz.X / (255 * 0.950456),
-                            Y = _xyz.Y / 255,
-                            Z = _xyz.Z / (255 * 1.088754),
-                            fX, fY, fZ, L, a, b;
 
-                        if (Y > 0.008856) {
-                            fY = Math.pow(Y, 1.0 / 3.0);
-                            L = 116.0 * fY - 16.0;
-                        } else {
-                            fY = 7.787 * Y + 16.0 / 116.0;
-                            L = 903.3 * Y;
+                        function PivotXyz(n) {
+                            return n > spaces.constant.Epsilon ? spaces.constant.CubicRoot(n) : (spaces.constant.Kappa * n + 16) / 116;
                         }
 
-                        if (X > 0.008856)
-                            fX = Math.pow(X, 1.0 / 3.0);
-                        else
-                            fX = 7.787 * X + 16.0 / 116.0;
+                        var white = spaces.constant.XYZ_WhiteRefrence,
+                            x = PivotXyz(_xyz.X / white.X),
+                            y = PivotXyz(_xyz.Y / white.Y),
+                            z = PivotXyz(_xyz.Z / white.Z);
 
-                        if (Z > 0.008856)
-                            fZ = Math.pow(Z, 1.0 / 3.0);
-                        else
-                            fZ = 7.787 * Z + 16.0 / 116.0;
-
-                        a = 500.0 * (fX - fY);
-                        b = 200.0 * (fY - fZ);
-
-                        if (L < BLACK) {
-                            a *= Math.exp((L - BLACK) / (BLACK / 4));
-                            b *= Math.exp((L - BLACK) / (BLACK / 4));
-                            L = BLACK;
+                        return {
+                            L: Math.max(0, 116 * y - 16),
+                            a: 500 * (x - y),
+                            b: 200 * (y - z),
                         }
-                        if (b > YELLOW)
-                            b = YELLOW;
+                    },
+                    cost: 1,
+                },
+                LUV: {
+                    convert: function(_xyz) {
+
+                        function GetDenominator(xyz) {
+                            return xyz.X + 15.0 * xyz.Y + 3.0 * xyz.Z;
+                        }
+
+                        var white = spaces.constant.XYZ_WhiteRefrence,
+                            y = _xyz.Y / white.Y,
+                            L = y > spaces.constant.Epsilon ? 116.0 * spaces.constant.CubicRoot(y) - 16.0 : spaces.constant.Kappa * y,
+                            targetDenominator = GetDenominator(_xyz),
+                            referenceDenominator = GetDenominator(white),
+                            xTarget = targetDenominator == 0 ? 0 : ((4.0 * _xyz.X / targetDenominator) - (4.0 * white.X / referenceDenominator)),
+                            yTarget = targetDenominator == 0 ? 0 : ((9.0 * _xyz.Y / targetDenominator) - (9.0 * white.Y / referenceDenominator)),
+                            U = 13.0 * L * xTarget,
+                            V = 13.0 * L * yTarget;
 
                         return {
                             L: L,
-                            a: a,
-                            b: b,
+                            U: U,
+                            V: V,
                         }
                     },
                     cost: 1,
@@ -694,42 +723,110 @@
                 },
                 XYZ: {
                     convert: function(_lab) {
-                        var L = _lab.L,
-                            a = _lab.a,
-                            b = _lab.b,
-                            fX, fY, fZ, X, Y, Z;
+                        var y = (_lab.L + 16.0) / 116.0,
+                            x = _lab.a / 500.0 + y,
+                            z = y - _lab.b / 200.0,
+                            white = spaces.constant.XYZ_WhiteRefrence,
+                            x3 = x * x * x,
+                            z3 = z * z * z;
+                        return {
+                            X: white.X * (x3 > spaces.constant.Epsilon ? x3 : (x - 16.0 / 116.0) / 7.787),
+                            Y: white.Y * (_lab.L > (spaces.constant.Kappa * spaces.constant.Epsilon) ? Math.pow(((_lab.L + 16.0) / 116.0), 3) : _lab.L / spaces.constant.Kappa),
+                            Z: white.Z * (z3 > spaces.constant.Epsilon ? z3 : (z - 16.0 / 116.0) / 7.787),
+                        };
+                    },
+                    cost: 1,
+                },
+                LCH: {
+                    convert: function(_lab) {
+                        var h = Math.atan2(_lab.b, _lab.a);
 
-                        fY = Math.pow((L + 16.0) / 116.0, 3.0);
-                        if (fY < 0.008856)
-                            fY = L / 903.3;
-                        Y = fY;
+                        if (h > 0) {
+                            h = (h / Math.PI) * 180.0;
+                        } else {
+                            h = 360 - (Math.abs(h) / Math.PI) * 180.0;
+                        }
 
-                        if (fY > 0.008856)
-                            fY = Math.pow(fY, 1.0 / 3.0);
-                        else
-                            fY = 7.787 * fY + 16.0 / 116.0;
-
-                        fX = a / 500.0 + fY;
-                        if (fX > 0.206893)
-                            X = Math.pow(fX, 3.0);
-                        else
-                            X = (fX - 16.0 / 116.0) / 7.787;
-
-                        fZ = fY - b / 200.0;
-                        if (fZ > 0.206893)
-                            Z = Math.pow(fZ, 3.0);
-                        else
-                            Z = (fZ - 16.0 / 116.0) / 7.787;
-
-                        X *= (0.950456 * 255);
-                        Y *= 255;
-                        Z *= (1.088754 * 255);
+                        if (h < 0) {
+                            h += 360.0;
+                        } else if (h >= 360) {
+                            h -= 360.0;
+                        }
 
                         return {
-                            X: X,
-                            Y: Y,
-                            Z: Z,
+                            L: _lab.L,
+                            C: Math.sqrt(_lab.a * _lab.a + _lab.b * _lab.b),
+                            H: h,
                         }
+                    },
+                    cost: 1,
+                },
+            },
+            LCH: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    return {
+                        LCH: {
+                            L: input[0],
+                            C: input[1],
+                            H: input[2],
+                        },
+                    };
+                },
+                Lab: {
+                    convert: function(_lch) {
+                        var hRadians = _lch.H * Math.PI / 180.0;
+                        return {
+                            L: _lch.L,
+                            a: Math.cos(hRadians) * _lch.C,
+                            b: Math.sin(hRadians) * _lch.C,
+                        };
+                    },
+                    cost: 1,
+                },
+            },
+            LUV: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    return {
+                        LUV: {
+                            L: input[0],
+                            U: input[1],
+                            V: input[2],
+                        },
+                    };
+                },
+                XYZ: {
+                    convert: function(_luv) {
+
+                        function GetDenominator(xyz) {
+                            return xyz.X + 15.0 * xyz.Y + 3.0 * xyz.Z;
+                        }
+
+                        var white = spaces.constant.XYZ_WhiteRefrence,
+                            c = -1.0 / 3.0,
+                            uPrime = (4.0 * white.X) / GetDenominator(white),
+                            vPrime = (9.0 * white.Y) / GetDenominator(white),
+                            a = (1.0 / 3.0) * ((52.0 * _luv.L) / (_luv.U + 13 * _luv.L * uPrime) - 1.0),
+                            imteL_16_116 = (_luv.L + 16.0) / 116.0,
+                            y = _luv.L > spaces.constant.Kappa * spaces.constant.Epsilon ? imteL_16_116 * imteL_16_116 * imteL_16_116 : _luv.L / spaces.constant.Kappa,
+                            b = -5.0 * y,
+                            d = y * ((39.0 * _luv.L) / (_luv.V + 13.0 * _luv.L * vPrime) - 5.0),
+                            x = (d - b) / (a - c),
+                            z = x * a + b;
+                            return {
+                                X: 100 * x,
+                                Y: 100 * y,
+                                Z: 100 * z,
+                            };
                     },
                     cost: 1,
                 },
@@ -900,7 +997,7 @@
                 var _sort = [];
 
                 for (var key in _tokens) {
-                    if (_tokens.hasOwnProperty(key) && _tokens[key]._path.getLast() == _target) {
+                    if (_tokens.hasOwnProperty(key) && _tokens[key] && _tokens[key]._path.getLast() == _target) {
                         _sort.push(_tokens[key]);
                     };
                 };
@@ -909,14 +1006,18 @@
                     return a.cost > b.cost ? -1 : 1;
                 });
 
-                var _rp = _sort[0]._path,
-                    _temp = eval("(_code." + _rp[0] + ")");
+                if (!!_sort.length) {
 
-                for (var i = 1; i < _rp.length; i++) {
-                    _temp = eval("(spaces." + _rp[i - 1] + "." + _rp[i] + ".convert(" + JSON.stringify(_temp) + "))");
-                };
+                    var _rp = _sort[0]._path,
+                        _temp = eval("(_code." + _rp[0] + ")");
 
-                output.push(_temp);
+                    for (var i = 1; i < _rp.length; i++) {
+                        _temp = eval("(spaces." + _rp[i - 1] + "." + _rp[i] + ".convert(" + JSON.stringify(_temp) + "))");
+                    };
+
+                    output.push(_temp);
+
+                }
 
             })
             return output;
