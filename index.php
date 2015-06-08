@@ -67,13 +67,13 @@
                 name: "XYZ",
                 para: [{
                     key: "X",
-                    value: 0,res:"0~2",
+                    value: 0,res:"0~95.05",
                 }, {
                     key: "Y",
-                    value: 0,res:"0~2",
+                    value: 0,res:"0~100",
                 }, {
                     key: "Z",
-                    value: 0,res:"0~2",
+                    value: 0,res:"0~108.9",
                 }, ]
             }, {
                 name: "Lab",
@@ -95,10 +95,10 @@
                     value: 0,res:"0~100",
                 }, {
                     key: "C",
-                    value: 0,res:"-128~127",
+                    value: 0,res:"0~100",
                 }, {
                     key: "H",
-                    value: 0,res:"-128~127",
+                    value: 0,res:"0~360",
                 }, ]
             }, {
                 name: "LUV",
