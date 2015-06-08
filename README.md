@@ -59,6 +59,7 @@ CC.reset();        // true
 
 * Lab
 * RGB
+* RGBA => RGB
 * CMYK
 * HSV(HSB)
 * HSL

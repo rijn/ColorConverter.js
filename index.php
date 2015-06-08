@@ -18,7 +18,7 @@
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="http://cdn.bootcss.com/angular.js/1.4.0-rc.2/angular.min.js" type="text/javascript"></script>
-    <script src="./ColorConverter.min.js"></script>
+    <script src="./ColorConverter.js"></script>
     <script>
     angular.module('colorconverter', [])
         .controller('ColorInputController', function($scope) {
@@ -102,6 +102,32 @@
                     key: "K",
                     value: 0,res:"0~1",
                 }, ]
+            },{
+                name: "RGBA",
+                para: [{
+                    key: "FR",
+                    value: 0,
+                    res:"0~255",
+                }, {
+                    key: "FG",
+                    value: 0,res:"0~255",
+                }, {
+                    key: "FB",
+                    value: 0,res:"0~255",
+                }, {
+                    key: "Alpha",
+                    value: 0,res:"0~1",
+                }, {
+                    key: "BR",
+                    value: 0,
+                    res:"0~255",
+                }, {
+                    key: "BG",
+                    value: 0,res:"0~255",
+                }, {
+                    key: "BB",
+                    value: 0,res:"0~255",
+                },]
             }, ];
 
             var cc = new ColorConverter();
@@ -183,8 +209,7 @@
             <h1><small>Quick start</small></h1>
         </div>
         <p>Include ColorConverter.js to your page.</p>
-        <pre>&lt;script src="ColorConverter.js"&gt;&lt;/script&gt;</pre>
-
+        <pre>&lt;script src="ColorConverter.min.js"&gt;&lt;/script&gt;</pre>
     </div>
 
     <div class="container">

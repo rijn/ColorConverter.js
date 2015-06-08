@@ -325,6 +325,41 @@
                     cost: 0,
                 },
             },
+            RGBA: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 7) {
+                        return false;
+                    }
+                    for (var i = 0; i < 7; i++) {
+                        if (input[i] < 0 || input[i] > 255) return false;
+                    }
+                    if (input[3] > 1) return false;
+                    return {
+                        RGBA: {
+                            FR: input[0],
+                            FG: input[1],
+                            FB: input[2],
+
+                            Alpha: input[3],
+                            BR: input[4],
+                            BG: input[5],
+                            BB: input[6],
+
+                        },
+                    }
+                },
+                RGB: {
+                    convert: function(_rgba) {
+                        return {
+                            R: (1 - _rgba.Alpha) * _rgba.BR + _rgba.Alpha * _rgba.FR,
+                            G: (1 - _rgba.Alpha) * _rgba.BG + _rgba.Alpha * _rgba.FG,
+                            B: (1 - _rgba.Alpha) * _rgba.BB + _rgba.Alpha * _rgba.FB,
+                        }
+                    },
+                    cost: 1,
+                },
+            },
             CMYK: {
                 import: function() {
                     var input = flatten(arguments);
