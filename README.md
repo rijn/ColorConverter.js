@@ -61,6 +61,7 @@ CC.reset();        // true
 * XYZ
 * RGB
 * RGBA => RGB
+* CMY
 * CMYK
 * HSV(HSB)
 * HSL

@@ -195,7 +195,7 @@
                         }
                     } else {
                         for (var i = 0; i < 3; i++) {
-                            rgbColor[i] = parseInt(Number(input[i]));
+                            rgbColor[i] = Number(input[i]);
                         }
                     }
 
@@ -221,6 +221,22 @@
                         };
                     },
                     cost: 1,
+                },
+                CMY: {
+                    convert: function(_rgb) {
+                        var c, m, y;
+
+                        c = (255 - _rgb.R) / 255;
+                        m = (255 - _rgb.G) / 255;
+                        y = (255 - _rgb.B) / 255;
+
+                        return {
+                            C: c,
+                            M: m,
+                            Y: y,
+                        };
+                    },
+                    cost: 0,
                 },
                 CMYK: {
                     convert: function(_rgb) {
@@ -321,6 +337,40 @@
                                 V: V,
                             }
                         }
+                    },
+                    cost: 0,
+                },
+            },
+            CMY: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+                    for (var i = 0; i < 3; i++) {
+                        if (input[i] < 0 || input[i] > 1) return false;
+                    }
+                    return {
+                        CMY: {
+                            C: input[0],
+                            M: input[1],
+                            Y: input[2],
+                        },
+                    }
+                },
+                RGB: {
+                    convert: function(_cmy) {
+                        var r, g, b;
+
+                        r = (1 - _cmyk.C) * 255;
+                        g = (1 - _cmyk.M) * 255;
+                        b = (1 - _cmyk.Y) * 255;
+
+                        return {
+                            R: r,
+                            G: g,
+                            B: b,
+                        };
                     },
                     cost: 0,
                 },

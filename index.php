@@ -87,6 +87,19 @@
                     value: 0,res:"-128~127",
                 }, ]
             }, {
+                name: "CMY",
+                para: [{
+                    key: "C",
+                    value: 0,
+                    res:"0~1",
+                }, {
+                    key: "M",
+                    value: 0,res:"0~1",
+                }, {
+                    key: "Y",
+                    value: 0,res:"0~1",
+                },]
+            },{
                 name: "CMYK",
                 para: [{
                     key: "C",
