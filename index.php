@@ -39,6 +39,19 @@
                     res:"0~255",
                 }, ]
             }, {
+                name: "HSV",
+                remark:"HSB",
+                para: [{
+                    key: "H",
+                    value: 0,res:"0~360",
+                }, {
+                    key: "S",
+                    value: 0,res:"0~1",
+                }, {
+                    key: "V",
+                    value: 0,res:"0~1",
+                }, ]
+            }, {
                 name: "HSL",
                 para: [{
                     key: "H",
@@ -48,18 +61,6 @@
                     value: 0,res:"0~1",
                 }, {
                     key: "L",
-                    value: 0,res:"0~1",
-                }, ]
-            }, {
-                name: "HSV",
-                para: [{
-                    key: "H",
-                    value: 0,res:"0~360",
-                }, {
-                    key: "S",
-                    value: 0,res:"0~1",
-                }, {
-                    key: "V",
                     value: 0,res:"0~1",
                 }, ]
             }, {
@@ -117,6 +118,7 @@
                 }, ]
             },{
                 name: "RGBA",
+                remark:"=> RGB",
                 para: [{
                     key: "FR",
                     value: 0,
@@ -200,7 +202,7 @@
         <div class="row" ng-controller="ColorInputController">
             <div class="col-md-3" ng-repeat="space in spaces">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{space.name}}</div>
+                    <div class="panel-heading">{{space.name}} {{space.remark||""}}</div>
                     <div class="panel-body">
                         <form>
                             <div class="form-group" ng-repeat="para in space.para">
