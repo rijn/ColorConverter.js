@@ -8,9 +8,10 @@
 (function(window, document, undefined) {
     "use strict";
 
+    /* Rewrite foreach method to support ie */
     Array.prototype.forEach = function(fun, context) {
-        var len = this.length;
-        var context = arguments[1];
+        var len = this.length,
+            context = arguments[1];
         if (typeof fun !== "function") {
             throw Error("unknown function");
         }
@@ -18,10 +19,11 @@
             fun.call(context, this[i], i, this);
         }
     };
-
+    /* Get the last element from Array */
     Array.prototype.getLast = function() {
         return this instanceof Array ? this[this.length - 1] : false;
-    }
+    };
+    /* Serach object form Array */
     Array.prototype.search = function(str) {
         if (this instanceof Array) {
             var found = [];
@@ -37,18 +39,18 @@
         } else {
             return false;
         }
-    }
-
+    };
+    /* Deep copy Object */
     Object.prototype.clone = function(oldObj) {
         if (typeof(this) != 'object') return this;
         if (this == null) return this;
-        var _newObj = this instanceof Array ? new Array() : new Object();
+        var newObj = this instanceof Array ? new Array() : new Object();
         for (var i in this)
-            _newObj[i] = this[i].clone();
-        return _newObj;
+            newObj[i] = this[i].clone();
+        return newObj;
     };
 
-
+    /* Flatten function */
     var flatten = function(input) {
             var has = function(obj, key) {
                     return obj != null && hasOwnProperty.call(obj, key);
@@ -84,6 +86,7 @@
             }
             return output;
         },
+        /* find the minimum or maximum element */
         min = function() {
             var _input = flatten([arguments]),
                 tempVal = _input[0];
@@ -104,6 +107,7 @@
             }
             return tempVal;
         },
+        /* AccOperation for Float */
         acc = {
             div: function(arg1, arg2) {
                 var t1 = 0,
@@ -165,10 +169,51 @@
                 return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
             }
         },
+        /* Color spaces defination */
         spaces = {
             RGB: {
+                import: function() {
+                    var input = flatten(arguments),
+                        rgbColor = [];
+                    if (input.length < 3) {
+                        var reg = /([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/;
+                        var sColor = input[0].toLowerCase();
+                        if (sColor && reg.test(sColor)) {
+                            sColor = reg.exec(sColor)[0];
+                            if (sColor.length === 3) {
+                                var sColorNew = "";
+                                for (var i = 0; i < 3; i += 1) {
+                                    sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
+                                }
+                                sColor = sColorNew;
+                            }
+                            var rgbColor = [];
+                            for (var i = 0; i < 6; i += 2) {
+                                rgbColor.push(parseInt("0x" + sColor.slice(i, i + 2)));
+                            }
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        for (var i = 0; i < 3; i++) {
+                            rgbColor[i] = parseInt(Number(input[i]));
+                        }
+                    }
+
+                    for (var i in rgbColor) {
+                        if (rgbColor[i] < 0) return false;
+                        if (rgbColor[i] > 255) return false;
+                    };
+
+                    return {
+                        RGB: {
+                            R: rgbColor[0],
+                            G: rgbColor[1],
+                            B: rgbColor[2],
+                        },
+                    };
+                },
                 XYZ: {
-                    /*convert rgb to xyz*/
                     convert: function(_rgb) {
                         return {
                             X: (_rgb.B * 199049 + _rgb.G * 394494 + _rgb.R * 455033 + 524288) >> 20,
@@ -282,6 +327,23 @@
                 },
             },
             CMYK: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 4) {
+                        return false;
+                    }
+                    for (var i = 0; i < 4; i++) {
+                        if (input[i] < 0 || input[i] > 1) return false;
+                    }
+                    return {
+                        CMYK: {
+                            C: input[0],
+                            M: input[1],
+                            Y: input[2],
+                            K: input[3],
+                        },
+                    }
+                },
                 RGB: {
                     convert: function(_cmyk) {
                         var r, g, b;
@@ -300,6 +362,22 @@
                 },
             },
             HSL: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    if (input[0] < 0 || input[0] > 360 || input[1] < 0 || input[2] < 0 || input[1] > 1 || input[2] > 1) return false;
+
+                    return {
+                        HSL: {
+                            H: input[0],
+                            S: input[1],
+                            L: input[2],
+                        },
+                    };
+                },
                 RGB: {
                     convert: function(_hsl) {
                         var H = _hsl.H,
@@ -360,6 +438,22 @@
                 },
             },
             HSV: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    if (input[0] < 0 || input[0] > 360 || input[1] < 0 || input[2] < 0 || input[1] > 1 || input[2] > 1) return false;
+
+                    return {
+                        HSV: {
+                            H: input[0],
+                            S: input[1],
+                            V: input[2],
+                        },
+                    }
+                },
                 RGB: {
                     convert: function(_hsv) {
                         var H = _hsv.H,
@@ -405,11 +499,9 @@
                                 _b = x;
                                 break;
                         };
-
                         _r += m;
                         _g += m;
                         _b += m;
-
                         return {
                             R: _r * 255,
                             G: _g * 255,
@@ -420,6 +512,20 @@
                 },
             },
             XYZ: {
+                import: function() {
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    return {
+                        XYZ: {
+                            X: input[0],
+                            Y: input[1],
+                            Z: input[2],
+                        },
+                    }
+                },
                 RGB: {
                     convert: function(_xyz) {
                         var Blue = (_xyz.X * 55460 - _xyz.Y * 213955 + _xyz.Z * 1207070) >> 20,
@@ -487,6 +593,21 @@
                 },
             },
             Lab: {
+                import: function() {
+                    console.log(arguments);
+                    var input = flatten(arguments);
+                    if (input.length < 3) {
+                        return false;
+                    }
+
+                    return {
+                        Lab: {
+                            L: input[0],
+                            a: input[1],
+                            b: input[2],
+                        },
+                    };
+                },
                 XYZ: {
                     convert: function(_lab) {
                         var L = _lab.L,
@@ -529,145 +650,48 @@
                     cost: 1,
                 },
             },
-        },
-
-        HUE2RGB = function(v1, v2, vH) {
-            if (vH < 0) vH += 1;
-            if (vH > 1) vH -= 1;
-            if (6.0 * vH < 1) return v1 + (v2 - v1) * 6.0 * vH;
-            if (2.0 * vH < 1) return v2;
-            if (3.0 * vH < 2) return v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0;
-            return (v1);
-        },
-
-        ImportProcessor = {
-            Lab: function() {
-                var input = flatten(arguments);
-                if (input.length < 3) {
-                    return false;
-                }
-
-                var _lab = {
-                    L: input[0],
-                    a: input[1],
-                    b: input[2],
-                };
-
-                return {
-                    Lab: _lab,
-                };
-            },
-            RGB: function() {
-                var input = flatten(arguments),
-                    rgbColor = [];
-                if (input.length < 3) {
-                    var reg = /([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/;
-                    var sColor = input[0].toLowerCase();
-                    if (sColor && reg.test(sColor)) {
-                        sColor = reg.exec(sColor)[0];
-                        if (sColor.length === 3) {
-                            var sColorNew = "";
-                            for (var i = 0; i < 3; i += 1) {
-                                sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
-                            }
-                            sColor = sColorNew;
-                        }
-                        var rgbColor = [];
-                        for (var i = 0; i < 6; i += 2) {
-                            rgbColor.push(parseInt("0x" + sColor.slice(i, i + 2)));
-                        }
-                    } else {
-                        return false;
-                    }
-                } else {
-                    for (var i = 0; i < 3; i++) {
-                        rgbColor[i] = parseInt(Number(input[i]));
-                    }
-                }
-
-                for (var i in rgbColor) {
-                    if (rgbColor[i] < 0) rgbColor[i] = 0;
-                    if (rgbColor[i] > 255) rgbColor[i] = 255;
-                };
-
-                var _rgb = {
-                    R: rgbColor[0],
-                    G: rgbColor[1],
-                    B: rgbColor[2],
-                };
-
-                return {
-                    RGB: _rgb,
-                };
-            },
-            CMYK: function() {
-                var input = flatten(arguments);
-                if (input.length < 4) {
-                    return false;
-                }
-
-                var _cmyk = {
-                    C: input[0],
-                    M: input[1],
-                    Y: input[2],
-                    K: input[3],
-                };
-
-                return {
-                    CMYK: _cmyk,
-                }
-            },
-            HSL: function() {
-                var input = flatten(arguments);
-                if (input.length < 3) {
-                    return false;
-                }
-
-                return {
-                    HSL: {
-                        H: input[0],
-                        S: input[1],
-                        L: input[2],
-                    },
-                };
-            },
-            HSV: function() {
-                var input = flatten(arguments);
-                if (input.length < 3) {
-                    return false;
-                }
-
-                return {
-                    HSV: {
-                        H: input[0],
-                        S: input[1],
-                        V: input[2],
-                    },
-                }
-            },
         };
 
-    function ColorConverter() {
 
+    /* Main function */
+    function ColorConverter() {
         var self = this;
         self.colors = [];
-
     };
 
+    /* Extend functions */
     ColorConverter.prototype = {
 
         constructor: ColorConverter,
 
-        /*Import colors*/
         import: function() {
-            var argu = flatten(arguments),
+            var argu = Array.prototype.slice.call(arguments),
                 output = [],
                 self = this;
+            console.log(argu);
 
             argu.forEach(function(code) {
-                var res = eval("(ImportProcessor." + code + ")");
-                self.colors.push(res);
-                output.push(!!res);
+                var _temp = flatten(code);
+                /*split temp*/
+                var _format = _temp.shift(),
+                    _para = _temp;
+
+                if (!spaces.hasOwnProperty(_format)) {
+                    throw Error("Unsupport color spaces");
+                }
+
+                var _obj = eval("(spaces." + _format + ".import)");
+
+                if (_obj === undefined) throw Error("Cannot convert from " + _format);
+
+                var _res = _obj.call(this, _para);
+
+                if (!!_res) {
+                    self.colors.push(_res);
+                    output.push(self.colors.length - 1);
+                } else {
+                    output.push(false);
+                }
             });
 
             return output;
@@ -675,11 +699,24 @@
 
         export: function() {
             var argu = flatten(arguments),
-                format = argu[0],
+                format = argu.shift(),
+                list = argu,
                 output = [],
                 self = this;
 
-            self.colors.forEach(function(_code) {
+            if (!list.length) {
+                for (var i in self.colors) {
+                    if (self.colors.hasOwnProperty(i)) {
+                        list.push(i);
+                    }
+                }
+            };
+
+            list.forEach(function(_i) {
+
+                var _code = self.colors[_i];
+
+                if (_code === undefined) throw Error("Undefined color");
 
                 var _key = (function(_code) {
                         for (var i in _code) {
@@ -694,6 +731,8 @@
                     }],
                     _target = format,
                     _depth = 0;
+
+
 
                 while (!(function(tokens, target) {
                         var flag = false;

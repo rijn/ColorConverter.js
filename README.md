@@ -20,31 +20,27 @@ You can push colors through `import` method.
 
 ```
 /* import a array of colors */
-colors = [
-    "RGB('ffffff');",
-    "RGB('#FFFFFF');",
-    "RGB(255, 255, 255);",
-    "CMYK(0, 0, 0, 0);",
-    "Lab(0, 0, 0);",
-];
-
-CC.import(colors);
-
-/* import one color */
-CC.import("RGB('#fff')");
+cc.import(
+    ["HSL", 180, 0.5, 0.1],
+    ["RGB", 180, 50, 50],
+    ["RGB", "ffffff"],
+    ["CMYK", 0, 0, 0],
+    ...
+);
 ```
 
 CC will return a array of import result like:
 
-`[true, true, false, true, ...]`
+`[true, true, true, false, ...]`
 
 ### Export colors
 
 Export colors with a converted data.
 
 ```
-CC.export("Lab");   // {L:0,a:0,b:0}
-CC.export("RGB");   // {R:0,G:0,B:0}
+CC.export("Lab");         // {L:0,a:0,b:0}
+CC.export("RGB",[0,1]);   // {R:180,G:50,B:50},{R:180,G:50,B:50}
+CC.export("RGB",1,2);     // {R:0,G:0,B:0},{R:0,G:0,B:0}
 ```
 
 ### Reset colors

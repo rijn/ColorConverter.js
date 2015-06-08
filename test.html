@@ -11,7 +11,7 @@
     <script src="./ColorConverter.js"></script>
     <script>
     var cc = new ColorConverter();
-    var colors = [
+    /*var colors = [
         "RGB('e8d9dd')",
         "RGB('#ABC')",
         "RGB(12,23,45)",
@@ -21,20 +21,25 @@
     console.log("import", colors);
     console.log(cc.import(colors));
     console.log("push #fff", cc.import("RGB('#fff')"));
-    console.log("push [#fff,#000]", cc.reset());
-    console.log("push HSL(180,0.5,0.1)", cc.import("HSL(180,0.5,0.1)"));
-    console.log("push HSV(180,0.5,0.1)", cc.import("HSV(180,0.5,0.1)"));
+    console.log("push [#fff,#000]", cc.reset());*/
+    console.log("push [HSL, 180, 0.5, 0.1]", cc.import(
+        ["HSL", 180, 0.5, 0.1], ["RGB", 180, 50, 50], ["RGB","ffffff"]
+    ));
+    /*console.log("push HSV,(180,0.5)", cc.import("HSV(180,0.5)"));
+    console.log("push RGB,(255,0,255)", cc.import("RGB(255,0,255)"));
+    console.log("push CMYK,(0.20,0.20,0.20,0.20)", cc.import("CMYK(0.20,0.20,0.20,0.20)"));*/
     console.log(cc.export("RGB"));
     //console.log(cc.export("RGB", 'function'));
     //console.log(cc.export("CMYK", 'function'));
     //console.log(cc.export("Lab", 'function'));
     //console.log(cc.export("RGB", 'object'));
     //console.log(cc.export("HSL", 'function'));
-
-    console.log("push #123456", cc.import("RGB('#123456')"));
-    console.log("export RGB", JSON.stringify(cc.export("RGB")));
-    console.log("export CMYK", JSON.stringify(cc.export("CMYK")));
-    console.log("export Lab", JSON.stringify(cc.export("Lab")));
+    /*
+        console.log("push #123456", cc.import("RGB('#123456')"));
+        console.log("export RGB", JSON.stringify(cc.export("RGB")));
+        console.log("export CMYK", JSON.stringify(cc.export("CMYK")));
+        console.log("export Lab", JSON.stringify(cc.export("Lab")));
+        */
     </script>
 </body>
 
