@@ -1,6 +1,5 @@
 /*
  * Color Converter
- * js part
  * @author Rijn
  */
 
@@ -807,6 +806,10 @@
                     _deplicate = null;
 
                     _depth++;
+                };
+
+                if (!_tokens.length) {
+                    throw Error("No path to target");
                 };
 
                 var _sort = [];

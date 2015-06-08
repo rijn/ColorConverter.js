@@ -18,7 +18,7 @@
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script src="http://cdn.bootcss.com/angular.js/1.4.0-rc.2/angular.min.js" type="text/javascript"></script>
-    <script src="./ColorConverter.js"></script>
+    <script src="./ColorConverter.min.js"></script>
     <script>
     angular.module('colorconverter', [])
         .controller('ColorInputController', function($scope) {
@@ -28,75 +28,79 @@
                 para: [{
                     key: "R",
                     value: 0,
+                    res:"0~255",
                 }, {
                     key: "G",
                     value: 0,
+                    res:"0~255",
                 }, {
                     key: "B",
                     value: 0,
+                    res:"0~255",
+                }, ]
+            }, {
+                name: "HSL",
+                para: [{
+                    key: "H",
+                    value: 0,res:"0~360",
+                }, {
+                    key: "S",
+                    value: 0,res:"0~1",
+                }, {
+                    key: "L",
+                    value: 0,res:"0~1",
+                }, ]
+            }, {
+                name: "HSV",
+                para: [{
+                    key: "H",
+                    value: 0,res:"0~360",
+                }, {
+                    key: "S",
+                    value: 0,res:"0~1",
+                }, {
+                    key: "V",
+                    value: 0,res:"0~1",
+                }, ]
+            }, {
+                name: "XYZ",
+                para: [{
+                    key: "X",
+                    value: 0,res:"0~255",
+                }, {
+                    key: "Y",
+                    value: 0,res:"0~255",
+                }, {
+                    key: "Z",
+                    value: 0,res:"0~255",
+                }, ]
+            }, {
+                name: "Lab",
+                para: [{
+                    key: "L",
+                    value: 0,res:"0~100",
+                }, {
+                    key: "a",
+                    value: 0,res:"-128~127",
+                }, {
+                    key: "b",
+                    value: 0,res:"-128~127",
                 }, ]
             }, {
                 name: "CMYK",
                 para: [{
                     key: "C",
                     value: 0,
+                    res:"0~1",
                 }, {
                     key: "M",
-                    value: 0,
+                    value: 0,res:"0~1",
                 }, {
                     key: "Y",
-                    value: 0,
+                    value: 0,res:"0~1",
                 }, {
                     key: "K",
-                    value: 0,
-                }, ]
-            }, {
-                name: "HSL",
-                para: [{
-                    key: "H",
-                    value: 0,
-                }, {
-                    key: "S",
-                    value: 0,
-                }, {
-                    key: "L",
-                    value: 0,
-                }, ]
-            }, {
-                name: "HSV",
-                para: [{
-                    key: "H",
-                    value: 0,
-                }, {
-                    key: "S",
-                    value: 0,
-                }, {
-                    key: "V",
-                    value: 0,
-                }, ]
-            }, {
-                name: "XYZ",
-                para: [{
-                    key: "X",
-                    value: 0,
-                }, {
-                    key: "Y",
-                    value: 0,
-                }, {
-                    key: "Z",
-                    value: 0,
-                }, ]
-            }, {
-                name: "Lab",
-                para: [{
-                    key: "L",
-                    value: 0,
-                }, {
-                    key: "a",
-                    value: 0,
-                }, {
-                    key: "b",
-                    value: 0,
+                    value: 0,res:"0~1",
                 }, ]
             }, ];
 
@@ -155,7 +159,7 @@
             <h1><small>Demo</small></h1>
         </div>
         <div class="row" ng-controller="ColorInputController">
-            <div class="col-md-2" ng-repeat="space in spaces">
+            <div class="col-md-3" ng-repeat="space in spaces">
                 <div class="panel panel-default">
                     <div class="panel-heading">{{space.name}}</div>
                     <div class="panel-body">
@@ -165,6 +169,7 @@
                                 <div class="input-group">
                                     <div class="input-group-addon">{{para.key}}</div>
                                     <input type="text" class="form-control" ng-model="para.value" ng-change="dataChange()">
+                                    <div class="input-group-addon">{{para.res}}</div>
                                 </div>
                             </div>
                         </form>
@@ -179,9 +184,53 @@
         </div>
         <p>Include ColorConverter.js to your page.</p>
         <pre>&lt;script src="ColorConverter.js"&gt;&lt;/script&gt;</pre>
-        <p style="padding-top:40px">Than initialize the library.</p>
-        <pre>var CC = new ColorConverter();</pre>
+
     </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><small>Color Conversions</small></h1>
+        </div>
+        <h2><small>Initialization</small></h2>
+        <pre>var CC = new ColorConverter();</pre>
+
+        <h2><small>Import colors</small></h2>
+        <p>You can push colors through <code>import</code> method.</p>
+        <pre>/* import a array of colors */
+cc.import([
+    ["HSL", 180, 0.5, 0.1],
+    ["RGB", 180, 50, 50],
+    ["RGB", "ffffff"],
+    ["CMYK", 0, 0, 0],
+    ...
+]);</pre>
+        <p>CC will return a array of import result like</p>
+        <pre>[true, true, true, false, ...]</pre>
+
+        <h2><small>Export colors</small></h2>
+        <p>Export colors with a converted data.</p>
+        <pre>CC.export("Lab");         // {L:0,a:0,b:0}
+CC.export("RGB",[0,1]);   // {R:180,G:50,B:50},{R:180,G:50,B:50}
+CC.export("RGB",1,2);     // {R:0,G:0,B:0},{R:0,G:0,B:0}</pre>
+
+        <h2><small>Reset colors</small></h2>
+        <p>delete the colors.</p>
+        <pre>CC.reset();        // true</pre>
+
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><small>Currently Supported Color Spaces</small></h1>
+        </div>
+        <pre>Lab
+RGB
+CMYK
+HSV(HSB)
+HSL</pre>
+    </div>
+
+
 
     <div class="container">
         <div class="page-header">
