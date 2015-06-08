@@ -57,11 +57,13 @@ CC.reset();        // true
 
 ## Currently Supported Color Spaces
 
-* Lab
-* XYZ
 * RGB
 * RGBA => RGB
 * CMY
 * CMYK
 * HSV(HSB)
 * HSL
+* XYZ
+* Lab (CIE L*a*b)
+* LCH
+* LUV

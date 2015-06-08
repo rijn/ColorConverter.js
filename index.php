@@ -40,7 +40,7 @@
                 }, ]
             }, {
                 name: "HSV",
-                remark:"HSB",
+                remark:"(HSB)",
                 para: [{
                     key: "H",
                     value: 0,res:"0~360",
