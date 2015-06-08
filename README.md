@@ -61,9 +61,9 @@ CC.reset();        // true
 * RGBA => RGB
 * CMY
 * CMYK
-* HSV(HSB)
+* HSV (HSB)
 * HSL
 * XYZ
-* Lab (CIE L*a*b)
+* Lab (CIELab)
 * LCH
 * LUV
