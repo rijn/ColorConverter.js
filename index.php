@@ -77,6 +77,7 @@
                 }, ]
             }, {
                 name: "Lab",
+                remark:"(CIE)",
                 para: [{
                     key: "L",
                     value: 0,res:"0~100",
