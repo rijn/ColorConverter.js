@@ -55,6 +55,37 @@ delete the colors.
 CC.reset();        // true
 ```
 
+## Extend function
+
+### lighten / darken
+
+```
+function lighten(_space, _rgb, _ratio) {
+    var cc = new ColorConverter();
+    cc.import([
+        [_space, _rgb],
+    ]);
+    var _hsl = cc.export("HSL")[0];
+    _hsl.L += _hsl.L * _ratio;
+    cc.reset();
+    cc.import([
+        ["HSL", _hsl],
+    ]);
+    return cc.export("RGB");
+};
+
+console.log(
+    lighten("RGB",
+        {
+            R: 12,
+            G: 34,
+            B: 56,
+        },
+        -0.5  /* if ratio < 0 it will be darken function */
+    )[0]
+);
+```
+
 ## Currently Supported Color Spaces
 
 * RGB

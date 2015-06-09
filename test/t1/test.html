@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ColorConverter.js</title>
+</head>
+
+<body>
+    <script src="../../ColorConverter.js"></script>
+    <script>
+    
+function lighten(_space, _rgb, _ratio) {
+    var cc = new ColorConverter();
+    cc.import([
+        [_space, _rgb],
+    ]);
+    var _hsl = cc.export("HSL")[0];
+    _hsl.L += _hsl.L * _ratio;
+    cc.reset();
+    cc.import([
+        ["HSL", _hsl],
+    ]);
+    return cc.export("RGB");
+};
+
+console.log(
+    lighten("RGB",
+        {
+            R: 12,
+            G: 34,
+            B: 56,
+        },
+        -0.5  /* if ratio < 0 it will be darken function */
+    )[0]
+);
+    //console.log(cc.export("RGB", 'function'));
+    //console.log(cc.export("CMYK", 'function'));
+    //console.log(cc.export("Lab", 'function'));
+    //console.log(cc.export("RGB", 'object'));
+    //console.log(cc.export("HSL", 'function'));
+    /*
+        console.log("push #123456", cc.import("RGB('#123456')"));
+        console.log("export RGB", JSON.stringify(cc.export("RGB")));
+        console.log("export CMYK", JSON.stringify(cc.export("CMYK")));
+        console.log("export Lab", JSON.stringify(cc.export("Lab")));
+        */
+    </script>
+</body>
+
+</html>

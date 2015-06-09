@@ -48,6 +48,17 @@
             newObj[i] = this[i].clone();
         return newObj;
     };
+    /* Check property */
+    Object.prototype.check = function() {
+        if (typeof this !== 'object') return false;
+        var argu = flatten(arguments);
+        for (var i = 0; i < argu.length; i++) {
+            if (!this.hasOwnProperty(argu[i])) {
+                return false;
+            }
+        };
+        return true;
+    };
 
     /* Flatten function */
     var flatten = function(input) {
@@ -186,6 +197,13 @@
                 import: function() {
                     var input = flatten(arguments),
                         rgbColor = [];
+
+                    if (input[0].check("R", "G", "B")) {
+                        return {
+                            RGB: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         var reg = /([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/;
                         var sColor = input[0].toLowerCase();
@@ -363,6 +381,13 @@
             CMY: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("C", "M", "Y")) {
+                        return {
+                            CMY: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -397,6 +422,13 @@
             RGBA: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("R", "G", "B", "A")) {
+                        return {
+                            RGBA: input[0],
+                        };
+                    };
+
                     if (input.length < 7) {
                         return false;
                     }
@@ -432,6 +464,13 @@
             CMYK: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("C", "M", "Y", "K")) {
+                        return {
+                            CMYK: input[0],
+                        };
+                    };
+
                     if (input.length < 4) {
                         return false;
                     }
@@ -467,9 +506,16 @@
             HSL: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("H", "S", "L")) {
+                        return {
+                            HSL: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
-                    }
+                    };
 
                     if (input[0] < 0 || input[0] > 360 || input[1] < 0 || input[2] < 0 || input[1] > 1 || input[2] > 1) return false;
 
@@ -543,6 +589,13 @@
             HSV: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("H", "S", "L")) {
+                        return {
+                            HSL: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -617,6 +670,13 @@
             XYZ: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("X", "Y", "Z")) {
+                        return {
+                            XYZ: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -707,8 +767,14 @@
             },
             Lab: {
                 import: function() {
-                    console.log(arguments);
                     var input = flatten(arguments);
+
+                    if (input[0].check("L", "a", "b")) {
+                        return {
+                            Lab: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -765,6 +831,13 @@
             LCH: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("L", "C", "H")) {
+                        return {
+                            LCH: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -792,6 +865,13 @@
             LUV: {
                 import: function() {
                     var input = flatten(arguments);
+
+                    if (input[0].check("L", "U", "V")) {
+                        return {
+                            LUV: input[0],
+                        };
+                    };
+
                     if (input.length < 3) {
                         return false;
                     }
@@ -822,11 +902,11 @@
                             d = y * ((39.0 * _luv.L) / (_luv.V + 13.0 * _luv.L * vPrime) - 5.0),
                             x = (d - b) / (a - c),
                             z = x * a + b;
-                            return {
-                                X: 100 * x,
-                                Y: 100 * y,
-                                Z: 100 * z,
-                            };
+                        return {
+                            X: 100 * x,
+                            Y: 100 * y,
+                            Z: 100 * z,
+                        };
                     },
                     cost: 1,
                 },

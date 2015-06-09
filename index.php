@@ -288,11 +288,16 @@ CC.export("RGB",1,2);     // {R:0,G:0,B:0},{R:0,G:0,B:0}</pre>
         <div class="page-header">
             <h1><small>Currently Supported Color Spaces</small></h1>
         </div>
-        <pre>Lab
-RGB
-CMYK
-HSV(HSB)
-HSL</pre>
+        <pre>* RGB
+* RGBA => RGB
+* CMY
+* CMYK
+* HSV (HSB)
+* HSL
+* XYZ
+* Lab (CIELab)
+* LCH
+* LUV</pre>
     </div>
 
 
