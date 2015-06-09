@@ -406,9 +406,9 @@
                     convert: function(_cmy) {
                         var r, g, b;
 
-                        r = (1 - _cmyk.C) * 255;
-                        g = (1 - _cmyk.M) * 255;
-                        b = (1 - _cmyk.Y) * 255;
+                        r = (1 - _cmy.C) * 255;
+                        g = (1 - _cmy.M) * 255;
+                        b = (1 - _cmy.Y) * 255;
 
                         return {
                             R: r,
