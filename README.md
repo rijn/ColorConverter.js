@@ -146,6 +146,34 @@ console.log(
 );
 ```
 
+### rotate
+
+```
+function rotate(_space, _color, _degrees) {
+    var cc = new ColorConverter();
+    cc.import([
+        [_space, _color],
+    ]);
+    var _hsl = cc.export("HSL")[0];
+    _hsl.H = (_hsl.H + _degrees) % 360;
+    _hsl.H = _hsl.H < 0 ? 360 + _hsl.H : _hsl.H;
+    cc.reset();
+    cc.import([
+        ["HSL", _hsl],
+    ]);
+    return cc.export(_space);
+};
+
+console.log(
+    rotate("CMYK", {
+        C: 0,
+        M: 0.1,
+        Y: 0.2,
+        K: 0.3
+    }, 15)[0]
+);
+```
+
 ## Currently Supported Color Spaces
 
 * RGB
