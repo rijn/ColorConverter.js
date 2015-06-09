@@ -57,13 +57,44 @@ CC.reset();        // true
 
 ## Extend function
 
+### negate
+
+```
+function negate(_space, _color) {
+    var cc = new ColorConverter();
+    cc.import([
+        [_space, _color],
+    ]);
+    var _rgb = cc.export("RGB")[0];
+    for (var i in _rgb) {
+        if (_rgb.hasOwnProperty(i)) {
+            _rgb[i] = 255 - _rgb[i];
+        }
+    }
+    cc.reset();
+    cc.import([
+        ["RGB", _rgb],
+    ]);
+    return cc.export(_space);
+};
+
+console.log(
+    negate("CMYK", {
+        C: 0,
+        M: 0.1,
+        Y: 0.2,
+        K: 0.3
+    })[0]
+);
+```
+
 ### lighten / darken
 
 ```
-function lighten(_space, _rgb, _ratio) {
+function lighten(_space, _color, _ratio) {
     var cc = new ColorConverter();
     cc.import([
-        [_space, _rgb],
+        [_space, _color],
     ]);
     var _hsl = cc.export("HSL")[0];
     _hsl.L += _hsl.L * _ratio;
@@ -82,6 +113,35 @@ console.log(
             B: 56,
         },
         -0.5  /* if ratio < 0 it will be darken function */
+    )[0]
+);
+```
+
+### saturate / desaturate
+
+```
+function saturate(_space, _color, _ratio) {
+    var cc = new ColorConverter();
+    cc.import([
+        [_space, _color],
+    ]);
+    var _hsl = cc.export("HSL")[0];
+    _hsl.S += _hsl.S * _ratio;
+    cc.reset();
+    cc.import([
+        ["HSL", _hsl],
+    ]);
+    return cc.export("RGB");
+};
+
+console.log(
+    saturate("RGB",
+        {
+            R: 12,
+            G: 34,
+            B: 56,
+        },
+        -0.5  /* if ratio < 0 it will be desaturate function */
     )[0]
 );
 ```
