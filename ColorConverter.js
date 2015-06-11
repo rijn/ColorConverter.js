@@ -40,12 +40,12 @@
         }
     };
     /* Deep copy Object */
-    var cloneObject= function(oldObj) {
-        if (typeof(this) != 'object') return this;
-        if (this == null) return this;
-        var newObj = this instanceof Array ? new Array() : new Object();
-        for (var i in this)
-            newObj[i] = cloneObject(this[i]);
+    var cloneObject = function(oldObj) {
+        if (typeof(oldObj) != 'object') return oldObj;
+        if (oldObj == null) return oldObj;
+        var newObj = oldObj instanceof Array ? new Array() : new Object();
+        for (var i in oldObj)
+            newObj[i] = cloneObject(oldObj[i]);
         return newObj;
     };
     /* Check property */
