@@ -45,7 +45,7 @@
         if (this == null) return this;
         var newObj = this instanceof Array ? new Array() : new Object();
         for (var i in this)
-            newObj[i] = this[i].clone();
+            newObj[i] = cloneObject(this[i]);
         return newObj;
     };
     /* Check property */
