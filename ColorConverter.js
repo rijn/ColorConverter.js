@@ -40,7 +40,7 @@
         }
     };
     /* Deep copy Object */
-    Object.prototype.clone = function(oldObj) {
+    var cloneObject= function(oldObj) {
         if (typeof(this) != 'object') return this;
         if (this == null) return this;
         var newObj = this instanceof Array ? new Array() : new Object();
@@ -197,6 +197,8 @@
                 import: function() {
                     var input = flatten(arguments),
                         rgbColor = [];
+
+                    console.log(input);
 
                     if (input[0].check("R", "G", "B")) {
                         return {
@@ -1045,7 +1047,7 @@
                                 for (var key in _obj) {
                                     if (_obj.hasOwnProperty(key)) {
 
-                                        var _temp = _on.clone();
+                                        var _temp = cloneObject(_on);
 
                                         if (_on._path.search(key) || _on._path.getLast() == _target) {
                                             _temp._terminal = true;
